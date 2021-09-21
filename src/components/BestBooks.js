@@ -38,6 +38,9 @@ class BestBooks extends React.Component {
                       <h3>{i.description}</h3>
                       <h3>{i.status}</h3>
                       <h3>{i.email}</h3>
+                      <br/>
+                      <button onClick={()=>{this.props.handleDelete(this.props.id)}}>Delete</button>
+
                     </Carousel.Caption>
                   </Carousel.Item>
                
