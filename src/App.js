@@ -118,10 +118,10 @@ class App extends React.Component {
           emailHandle={this.emailHandle}
           descriptionHandle={this.descriptionHandle} 
           submitHandle={this.submitHandle}
-          handleDelete={this.handleDelete}/>
+         />
 
 
-          <BestBooks books={this.state.books}  />
+          <BestBooks books={this.state.books}  handleDelete={this.handleDelete} />
          
        
       </>
