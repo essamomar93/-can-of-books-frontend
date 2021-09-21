@@ -6,27 +6,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 class BestBooks extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     // books: []
-  //     // showData:false
-  //   }
-  // }
 
   render() {
-    // console.log(this.state.books);
-
     console.log(this.props.books)
 
     return (
       <>
-      {this.props.books.length >0 && (
-        <Carousel>
-          {
-            this.props.books.map((i) => {
-              return (
-               
+        {this.props.books.length > 0 && (
+          <Carousel>
+            {
+              this.props.books.map((i) => {
+                return (
+
                   <Carousel.Item>
                     <img
                       className="d-block w-100"
@@ -38,24 +29,24 @@ class BestBooks extends React.Component {
                       <h3>{i.description}</h3>
                       <h3>{i.status}</h3>
                       <h3>{i.email}</h3>
-                      <br/>
-                      <button onClick={()=>{this.props.handleDelete(this.props.id)}}>Delete</button>
+                      <br />
+                      <button onClick={() => { this.props.handleDelete(i._id) }}>Delete</button>
 
                     </Carousel.Caption>
                   </Carousel.Item>
-               
-              )
-            })
-          }
-        </Carousel>
-    
-      )}
-      
-      {this.props.books.length === 0 && (<h1>NO BOOKS FOUND</h1>
+
+                )
+              })
+            }
+          </Carousel>
+
         )}
-    </>
-  )
-}
+
+        {this.props.books.length === 0 && (<h1>NO BOOKS FOUND</h1>
+        )}
+      </>
+    )
+  }
 }
 
 export default BestBooks;
