@@ -1,13 +1,20 @@
 import React from 'react';
+import Header from './components/Header';
+// import Footer from './Footer';
 import BestBooks from './components/BestBooks';
 import axios from "axios";
 import BookForm from './components/BookForm'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import Footer from './components/Footer';
+// ===============================
+import LoginButton from './components/LoginButton';
+import LogoutButton from './components/LogoutButton';
+import Button from './components/Button';
+import { withAuth0 } from '@auth0/auth0-react';
 
 
 class App extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -17,7 +24,27 @@ class App extends React.Component {
       status: "",
       email: "",
       id: "",
-      showUpdate:false,
+      showUpdate: false
+    }
+  }
+  callApi = () => {
+    if (this.props.auth0.isAuthenticated) {
+      this.props.auth0.getIdTokenClaims()
+        .then(res => {
+          const jwt = res.__raw;
+          const config = {
+            headers: { "Authorization": `Bearer ${jwt}` },
+            method: 'get',
+            baseURL: process.env.REACT_APP_SERVER_URL,
+            url: '/auth'
+          }
+          axios(config)
+            .then(result => console.log(result.data))
+            .catch(err => console.error(err));
+        })
+        .catch(err => console.error(err));
+    } else {
+      console.log("user is not authenticated")
     }
   }
   componentDidMount = () => {
@@ -75,9 +102,15 @@ class App extends React.Component {
     };
     axios(config).then(res => {
       console.log(res.data)
-      this.setState({
-        books: res.data
-      })
+      // this.setState({
+      //   books: res.data
+      // })
+      axios.get(`${process.env.REACT_APP_BACKEND_URL}/books`)
+        .then((res) => {
+          this.setState({
+            books: res.data
+          });
+        })
     })
   }
   handleDelete = (id) => {
@@ -94,70 +127,87 @@ class App extends React.Component {
         console.log(res.data);
       })
   }
-  handleUpdate = (id, username, email) => {
+
+  // ------------------
+  handleUpdate = (title, email, status, description, id) => {
     this.setState({
-      username: username,
+      showUpdate: true,
+      title: title,
+      status: status,
+      description: description,
       email: email,
       id: id,
-      showUpdate: true
-    })
-  }
-  handleUpdateForm = () => {
+    });
+  };
+
+
+  handleUpdateForm = (e) => {
+    e.preventDefault();
     let config = {
       method: "PUT",
       baseURL: process.env.REACT_APP_BACKEND_URL,
-      url: `/update-student/${this.state.id}`,
+      url: `/update-book/${this.state.id}`,
       data: {
-        username: this.state.username,
-        email: this.state.email
-      }
-    }
-    axios(config).then(res => {
+        title: this.state.title,
+        status: this.state.status,
+
+        description: this.state.description,
+        email: this.state.email,
+      },
+    };
+
+    axios(config).then((res) => {
       this.setState({
-        studentsList: res.data
-      })
-    });
-  }
+        books: res.data,
+
+      });
+      console.log(res.data)
+    })
+
+  };
   render() {
     return (
-      {
-        !this.state.showUpdate ? <>
-      <form onSubmit={this.handleSubmit}>
-        <input type="texts" placeholder="username" onChange={this.handleUsername} />
-        <input type="texts" placeholder="email" onChange={this.handleEmail} />
-        <input type="submit" value="create" />
-      </form>
-    </> :
-      // Update form
-      <form onSubmit={this.handleUpdateForm}>
-        <input
-          type="texts"
-          onChange={this.handleUsername}
-          value={this.state.username}
-        />
-        <input
-          type="texts"
-          value={this.state.email}
-          onChange={this.handleEmail} />
-        <input type="submit" value="update" />
-      </form>
-  }
       <>
-  <BookForm
-    tiltleHandle={this.tiltleHandle}
-    statusHandle={this.statusHandle}
-    emailHandle={this.emailHandle}
-    descriptionHandle={this.descriptionHandle}
-    submitHandle={this.submitHandle}
-  />
-  <BestBooks
-    books={this.state.books}
-    id={this.id}
-    handleDelete={this.handleDelete}
-  />
+        <Header />
+        <br />
+        <br />
+        {
+          this.props.auth0.isAuthenticated ?
+            <>
+              <LogoutButton />
+              <h1>{this.props.auth0.user.name}</h1>
+              <img src={this.props.auth0.user.picture} alt="" />\
+              <BestBooks
+                books={this.state.books}
+                id={this.id}
+                handleDelete={this.handleDelete}
+                handleUpdate={this.handleUpdate}
+              />
+              <BookForm
+                tiltleHandle={this.tiltleHandle}
+                statusHandle={this.statusHandle}
+                emailHandle={this.emailHandle}
+                descriptionHandle={this.descriptionHandle}
+                submitHandle={this.submitHandle}
+                // ---------update
+                showUpdate={this.state.showUpdate}
+                id={this.state.id}
+                title={this.state.title}
+                status={this.state.status}
+                description={this.state.description}
+                email={this.state.email}
+                handleUpdateForm={this.handleUpdateForm}
 
-</>
+              />
+              <Button callApi={this.callApi} />
+            </> :
+            <LoginButton />
+        }
+        <br />
+        <br />
+        <Footer />
+      </>
     )
   }
 }
-export default App;
+export default withAuth0(App);
