@@ -33,7 +33,7 @@ Atlas mongo
 
 
 ## Estimates
-Name of feature: Building CRUD apps with MongoDB
+Name of feature: Building CRUD apps with MongoDB(lab 11)
 
 
 Estimate of time needed to complete: 4 hours
@@ -44,7 +44,7 @@ Finish time: 6:00pm
 
 Actual time needed to complete: 4 hours
 ----------------------------------
-Name of feature: Resource Create and Delete
+Name of feature: Resource Create and Delete(lab 12)
 
 Estimate of time needed to complete: 5 hours
 
@@ -55,17 +55,7 @@ Finish time: 8:00pm
 Actual time needed to complete: 5 hours
 
 ----------------------------
-Name of feature: can of books frontend 
-
-Estimate of time needed to complete: 4
-
-Start time: 2
-
-Finish time: 9
-
-Actual time needed to complete: 7
----------------------------
-Name of feature: UPDATE of CRUD
+Name of feature: UPDATE of CRUD(lab 13)
 
 Estimate of time needed to complete: 4
 
@@ -74,6 +64,17 @@ Start time: 2
 Finish time: 7
 
 Actual time needed to complete: 5 hours
+------------------------------
+Name of feature: User Authentication with Auth0 ( lab 14)
+
+
+Estimate of time needed to complete: 4
+
+Start time: 5:00pm
+
+Finish time: 9:00pm
+
+Actual time needed to complete: 4 hours
 ------------------------------
 ## Credit and Collaborations
 
