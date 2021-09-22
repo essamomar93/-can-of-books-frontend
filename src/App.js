@@ -1,11 +1,12 @@
 import React from 'react';
-// import Header from './Header';
+import Header from './components/Header';
 // import Footer from './Footer';
 import BestBooks from'./components/BestBooks';
 import axios from "axios";
 import BookForm from './components/BookForm'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import Footer from './components/Footer';
 
 
 class App extends React.Component {
@@ -19,6 +20,7 @@ class App extends React.Component {
       status: "",
       email: "",
       id: "",
+      showUpdate:false
     }
   }
   componentDidMount = () => {
@@ -76,8 +78,14 @@ class App extends React.Component {
     };
     axios(config).then(res => {
       console.log(res.data)
-      this.setState({
-        books: res.data
+      // this.setState({
+      //   books: res.data
+      // })
+      axios.get(`${process.env.REACT_APP_BACKEND_URL}/books`)
+      .then((res) => {
+        this.setState({
+          books: res.data
+        });
       })
     })
   }
@@ -95,144 +103,81 @@ class App extends React.Component {
         console.log(res.data);
       })
   }
+
+  // ------------------
+  handleUpdate = (title,email, status,description, id) => {
+    this.setState({
+      showUpdate:true,
+      title: title,
+      status: status,
+      description: description,
+       email: email,
+      id: id,
+    });
+  };
+
+  
+  handleUpdateForm = (e) => {
+    e.preventDefault();
+    let config = {
+      method: "PUT",
+      baseURL: process.env.REACT_APP_BACKEND_URL,
+      url: `/update-book/${this.state.id}`,
+      data: {
+        title: this.state.title,
+        status: this.state.status,
+
+        description: this.state.description,
+        email: this.state.email,
+      },
+    };
+
+    axios(config).then((res) => {
+        this.setState({
+          books: res.data,
+          
+       });
+       console.log(res.data)
+      })
+      
+  };
   render() {
     return (
+
+      
       <>
-        <BookForm
+      <Header/>
+       
+        <br/>
+        <br/>
+        <BestBooks
+          books={this.state.books}
+          id={this.id}
+          handleDelete={this.handleDelete}
+                  handleUpdate={this.handleUpdate}
+        />
+ <BookForm
           tiltleHandle={this.tiltleHandle}
           statusHandle={this.statusHandle}
           emailHandle={this.emailHandle}
           descriptionHandle={this.descriptionHandle}
           submitHandle={this.submitHandle}
-        />
-        <BestBooks
-          books={this.state.books}
-          id={this.id}
-          handleDelete={this.handleDelete}
-        />
+          // ---------update
+          showUpdate={this.state.showUpdate}
+         id= {this.state.id}
+         title= {this.state.title}
+         status={ this.state.status}
+ 
+         description= {this.state.description}
+         email= {this.state.email}
+          handleUpdateForm ={this.handleUpdateForm}
 
+        />
+        <Footer/>
       </>
     )
   }
 }
 
-
-// class App extends React.Component {
-
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//        books: [],
-//        title:"",
-//       description:"",
-//       status:"",
-//       email:"",
-//       id:""
-//    }
-//   }
-//   componentDidMount = () => {
-
-//     axios.get(`${process.env.REACT_APP_BACKEND_URL}/books`)
-//     .then((res) => {
-//         this.setState({
-//          books: res.data
-    
-
-//         });
-//         // console.log(res.data)
-
-//       })
-      
-//     console.log(`${process.env.REACT_APP_BACKEND_URL}/books`)  
-//   }
-//   // -----------------------------------
-//   loginHandler = (user) => {
-//     this.setState({
-//       user,
-//     })
-//   }
-
-//   logoutHandler = () => {
-//     this.setState({
-//       user: null,
-//     })
-//   }
-//   tiltleHandle=(e)=>{
-//     this.setState({
-//       title:e.target.value,
-//     })
-//   }
-//   descriptionHandle=(e)=>{
-//     this.setState({
-//       description:e.target.value,
-//     })
-//   }
-//   statusHandle=(e)=>{
-//     this.setState({
-//       status:e.target.value,
-//     })
-//   }
-//   emailHandle=(e)=>{
-//     this.setState({
-//       email:e.target.value,
-//     })
-//   }
-//   submitHandle=(e)=>{
-//     e.preventDefault();
-//     let config={
-//       method:"POST",
-//       baseURL:process.env.REACT_APP_BACKEND_URL,
-//       url:"/create-book",
-//       data:{
-//         title:this.state.title,
-//         description:this.state.description,
-//         status:this.state.status,
-//         email:this.state.email
-
-//       }
-     
-//     };
-//     axios(config).then(res=>{
-//       console.log(res.data)
-//       this.setState({
-//         books:res.data
-//       })
-//     })
-//   }
-  
-//   handleDelete=(id)=>{
-// console.log(id);
-//     let config={
-//       method:"DELETE",
-//       baseURL:process.env.REACT_APP_BACKEND_URL,
-//       url:`/delet-book/${id}`,
-//     }
-//     axios(config)
-//       .then((res) => {
-//         console.log(res.books)
-//         // this.setState({
-//         //   books: res.data,
-//         // });
-//       })
-//     }
-//   render() {
-//     return (
-//       <>
-       
-//           <BookForm tiltleHandle={this.tiltleHandle}
-//           statusHandle={this.statusHandle}
-//           emailHandle={this.emailHandle}
-//           descriptionHandle={this.descriptionHandle} 
-//           submitHandle={this.submitHandle}
-//          />
-
-
-//           <BestBooks books={this.state.books}  id={this.id}  handleDelete={this.handleDelete} />
-         
-       
-//       </>
-//     )
-//   }
-// }
 
 export default App;
