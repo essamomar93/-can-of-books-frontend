@@ -1,12 +1,16 @@
 import React from 'react';
+import { withAuth0 } from '@auth0/auth0-react';
+import Login from './components/Login';
+import Logout from './components/Logout';
 import Header from './components/Header';
-// import Footer from './Footer';
+// import Button from "react-bootstrap/Button";
+import Button from './components/Button';
 import BestBooks from'./components/BestBooks';
 import axios from "axios";
 import BookForm from './components/BookForm'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import Footer from './components/Footer';
+import Footer from './components/Footer';;
 
 
 class App extends React.Component {
@@ -23,6 +27,31 @@ class App extends React.Component {
       showUpdate:false
     }
   }
+
+  // ---------------------------Auth0
+callApi = () => {
+    if(this.props.auth0.isAuthenticated) {
+      this.props.auth0.getIdTokenClaims()
+      .then(res => {
+        const jwt = res.__raw;
+        const config = {
+          headers: {"Authorization" : `Bearer ${jwt}`},
+          method: 'get',
+          baseURL: process.env.REACT_APP_BACKEND_URL,
+          url: '/auth'
+        }
+        axios(config)
+          .then(result => console.log(result.data))
+          .catch(err => console.error(err));
+      })
+      .catch(err => console.error(err));
+    }else{
+      console.log("user is not authenticated")
+    }
+
+  }
+
+  // -----------------
   componentDidMount = () => {
 
     axios.get(`${process.env.REACT_APP_BACKEND_URL}/books`)
@@ -126,8 +155,7 @@ class App extends React.Component {
       data: {
         title: this.state.title,
         status: this.state.status,
-
-        description: this.state.description,
+     description: this.state.description,
         email: this.state.email,
       },
     };
@@ -147,15 +175,22 @@ class App extends React.Component {
       
       <>
       <Header/>
-       
-        <br/>
-        <br/>
+       <br/>
+       <br/>
+       <br/>
+
+       <br/>
+
+      {  this.props.auth0.isAuthenticated?
+          <>
+          <Logout/>
+          <h1>{this.props.auth0.user.name}</h1>
+          <img src={this.props.auth0.user.picture} alt=""/>
         <BestBooks
           books={this.state.books}
           id={this.id}
           handleDelete={this.handleDelete}
-                  handleUpdate={this.handleUpdate}
-        />
+                  handleUpdate={this.handleUpdate} />
  <BookForm
           tiltleHandle={this.tiltleHandle}
           statusHandle={this.statusHandle}
@@ -170,9 +205,18 @@ class App extends React.Component {
  
          description= {this.state.description}
          email= {this.state.email}
-          handleUpdateForm ={this.handleUpdateForm}
+          handleUpdateForm ={this.handleUpdateForm}/>
 
-        />
+            <Button callApi={this.callApi}/>
+          </>:
+          <Login/>
+          
+          }
+                 <br/>
+                 <br/>
+                 <br/>
+                 <br/>
+
         <Footer/>
       </>
     )
@@ -180,4 +224,4 @@ class App extends React.Component {
 }
 
 
-export default App;
+export default withAuth0(App);

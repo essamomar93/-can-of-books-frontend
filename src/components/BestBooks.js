@@ -1,5 +1,5 @@
 import React from "react";
-// import axios from "axios";
+import { withAuth0 } from '@auth0/auth0-react';
 import Carousel from "react-bootstrap/Carousel";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Row from "react-bootstrap/Row";
@@ -23,6 +23,11 @@ class BestBooks extends React.Component {
 
     return (
       <>
+      {/* ----------------*/}
+      <button onClick={this.props.callApi}>
+                call AUTH api               
+            </button>
+            {/* ------------------------- */}
         {this.props.books.length > 0 && (
           <Container>
             <Row>
@@ -48,9 +53,9 @@ class BestBooks extends React.Component {
                           <Button
                             variant="outline-danger"
                             onClick={() => {
+                              // e.preventDefault();
                               this.props.handleDelete(i._id);
-                            }}
-                          >
+                            }} >
                             Delete
                           </Button>
                       
@@ -85,4 +90,4 @@ class BestBooks extends React.Component {
   }
 }
 
-export default BestBooks;
+export default withAuth0(BestBooks);
