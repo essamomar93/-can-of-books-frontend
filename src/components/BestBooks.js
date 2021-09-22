@@ -4,7 +4,6 @@ import Carousel from 'react-bootstrap/Carousel';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-
 class BestBooks extends React.Component {
 
   render() {

@@ -1,10 +1,7 @@
 import React from 'react';
-// import Header from './Header';
-// import Footer from './Footer';
 import BestBooks from './components/BestBooks';
 import axios from "axios";
 import BookForm from './components/BookForm'
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -20,6 +17,7 @@ class App extends React.Component {
       status: "",
       email: "",
       id: "",
+      showUpdate:false,
     }
   }
   componentDidMount = () => {
@@ -96,25 +94,70 @@ class App extends React.Component {
         console.log(res.data);
       })
   }
+  handleUpdate = (id, username, email) => {
+    this.setState({
+      username: username,
+      email: email,
+      id: id,
+      showUpdate: true
+    })
+  }
+  handleUpdateForm = () => {
+    let config = {
+      method: "PUT",
+      baseURL: process.env.REACT_APP_BACKEND_URL,
+      url: `/update-student/${this.state.id}`,
+      data: {
+        username: this.state.username,
+        email: this.state.email
+      }
+    }
+    axios(config).then(res => {
+      this.setState({
+        studentsList: res.data
+      })
+    });
+  }
   render() {
     return (
+      {
+        !this.state.showUpdate ? <>
+      <form onSubmit={this.handleSubmit}>
+        <input type="texts" placeholder="username" onChange={this.handleUsername} />
+        <input type="texts" placeholder="email" onChange={this.handleEmail} />
+        <input type="submit" value="create" />
+      </form>
+    </> :
+      // Update form
+      <form onSubmit={this.handleUpdateForm}>
+        <input
+          type="texts"
+          onChange={this.handleUsername}
+          value={this.state.username}
+        />
+        <input
+          type="texts"
+          value={this.state.email}
+          onChange={this.handleEmail} />
+        <input type="submit" value="update" />
+      </form>
+  }
       <>
-        <BookForm
-          tiltleHandle={this.tiltleHandle}
-          statusHandle={this.statusHandle}
-          emailHandle={this.emailHandle}
-          descriptionHandle={this.descriptionHandle}
-          submitHandle={this.submitHandle}
-        />
-        <BestBooks
-          books={this.state.books}
-          id={this.id}
-          handleDelete={this.handleDelete}
-        />
+  <BookForm
+    tiltleHandle={this.tiltleHandle}
+    statusHandle={this.statusHandle}
+    emailHandle={this.emailHandle}
+    descriptionHandle={this.descriptionHandle}
+    submitHandle={this.submitHandle}
+  />
+  <BestBooks
+    books={this.state.books}
+    id={this.id}
+    handleDelete={this.handleDelete}
+  />
 
-      </>
+</>
     )
   }
 }
-
 export default App;
