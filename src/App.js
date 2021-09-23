@@ -35,7 +35,7 @@ class App extends React.Component {
           const config = {
             headers: { "Authorization": `Bearer ${jwt}` },
             method: 'get',
-            baseURL: process.env.REACT_APP_SERVER_URL,
+            baseURL: process.env.REACT_APP_BACKEND_URL,
             url: '/auth'
           }
           axios(config)
@@ -47,6 +47,7 @@ class App extends React.Component {
       console.log("user is not authenticated")
     }
   }
+
   componentDidMount = () => {
 
     axios.get(`${process.env.REACT_APP_BACKEND_URL}/books`)
@@ -102,9 +103,6 @@ class App extends React.Component {
     };
     axios(config).then(res => {
       console.log(res.data)
-      // this.setState({
-      //   books: res.data
-      // })
       axios.get(`${process.env.REACT_APP_BACKEND_URL}/books`)
         .then((res) => {
           this.setState({
@@ -200,6 +198,7 @@ class App extends React.Component {
 
               />
               <Button callApi={this.callApi} />
+
             </> :
             <LoginButton />
         }
